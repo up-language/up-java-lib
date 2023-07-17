@@ -27,13 +27,19 @@ public class VM8 implements Closeable {
 	public VM8() {
 		this.engine = GraalJSScriptEngine.create(
 				Engine.newBuilder().option("engine.WarnInterpreterOnly", "false").build(),
-				Context.newBuilder("js").allowAllAccess(true)
-						// .allowIO(false)
-						.option(JSContextOptions.ECMASCRIPT_VERSION_NAME, "2022"));
+				Context.newBuilder("js").allowAllAccess(true).option(JSContextOptions.ECMASCRIPT_VERSION_NAME, "2022"));
 		this.setGlobal("$vm", this);
 		try {
-			this.js("globalThis.print = function(x, title) { $vm.print(x, title===undefined?null:title); }");
-			this.js("globalThis.load = function(path) { return $vm.load(path); }");
+			this.js("""
+					globalThis.print = function(x, title) {
+					  $vm.print(x, title===undefined?null:title);
+					}
+					""");
+			this.js("""
+					globalThis.load = function(path) {
+					  return $vm.load(path);
+					}
+					""");
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
@@ -83,12 +89,12 @@ public class VM8 implements Closeable {
 
 	@SuppressWarnings("unchecked")
 	public AbstractList<Object> asArray(Object x) {
-		return (AbstractList<Object>)x;
+		return (AbstractList<Object>) x;
 	}
 
 	@SuppressWarnings("unchecked")
 	public AbstractMap<String, Object> asObject(Object x) {
-		return (AbstractMap<String, Object>)x;
+		return (AbstractMap<String, Object>) x;
 	}
 
 	private Object run(String script, Object[] args) throws ScriptException {
@@ -209,7 +215,6 @@ public class VM8 implements Closeable {
 	}
 
 	public Object loadFile(String path) throws Exception {
-		// return this.run_(path, this.getSourceCode(path), new Object[] {});
 		return js(getSourceCode(path));
 	}
 

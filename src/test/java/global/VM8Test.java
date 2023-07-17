@@ -42,7 +42,7 @@ class VM8Test {
 		vm.js("print(count)");
 		assertEquals(3, vm.js("count"));
 		//vm.load(":/json.js");
-		vm.loadFile("json.js");
+		vm.loadFile(":/json.js");
 		// vm.loadFile(":/json.js");
 		// vm.loadFile("https://raw.githubusercontent.com/up-language/up-language/main/om-java/json.js");
 		vm.js("print(JSON.stringify(json, null, 2))");

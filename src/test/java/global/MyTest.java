@@ -39,6 +39,10 @@ class CalcTest {
   @Test
   void testPlus() {
     System.out.println("testPlus を実行: 11 + 22 = 33");
+    String s = """
+    		   abc
+    		   def""";
+    System.out.println("["+s+"]");
     int x = 11 + 22;
     // 第1引数: expected 想定される結果
     // 第2引数: actual 実行結果
