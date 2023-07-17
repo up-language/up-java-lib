@@ -14,6 +14,8 @@ import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.Date;
 
+import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
 import org.apache.commons.io.FileUtils;
@@ -31,16 +33,16 @@ public class VM8 implements Closeable {
 		this.engine = GraalJSScriptEngine.create(
 				Engine.newBuilder().option("engine.WarnInterpreterOnly", "false").build(),
 				Context.newBuilder("js").allowAllAccess(true).option(JSContextOptions.ECMASCRIPT_VERSION_NAME, "2022"));
-		this.setGlobal("$vm", this);
+		this.setGlobal("__vm__", this);
 		try {
 			this.js("""
 					globalThis.print = function(x, title) {
-					  $vm.print(x, title===undefined?null:title);
+					  __vm__.print(x, title===undefined?null:title);
 					}
 					""");
 			this.js("""
 					globalThis.load = function(path) {
-					  return $vm.load(path);
+					  return __vm__.load(path);
 					}
 					""");
 		} catch (ScriptException e) {
@@ -59,10 +61,9 @@ public class VM8 implements Closeable {
 		return n;
 	}
 
-	public void deleteGlobal(String name) throws ScriptException {
-		engine.eval("delete " + name);
-
-	}
+	//public void deleteGlobal(String name) throws ScriptException {
+	//	engine.eval("delete " + name);
+	//}
 
 	@SuppressWarnings("unchecked")
 	public AbstractList<Object> newArray(Object... args) {
@@ -89,7 +90,7 @@ public class VM8 implements Closeable {
 			return null;
 		}
 	}
-	
+
 	public Object newDate() {
 		try {
 			return js("new Date()");
@@ -123,11 +124,11 @@ public class VM8 implements Closeable {
 	public AbstractMap<String, Object> asObject(Object x) {
 		return (AbstractMap<String, Object>) x;
 	}
-	
+
 	public Date asDate(Object x) throws ParseException {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        Date date = df.parse(x.toString());
-        return date;
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		Date date = df.parse(x.toString());
+		return date;
 	}
 
 	private Object run(String script, Object[] args) throws ScriptException {
@@ -137,9 +138,19 @@ public class VM8 implements Closeable {
 		try {
 			return engine.eval(script);
 		} finally {
-			for (int i = 0; i < args.length; i++) {
-				this.deleteGlobal("$" + i);
-			}
+			engine.eval("""
+					    for (let x in globalThis) {
+					      //console.log("<"+x+">");
+					      if (x.startsWith("$")) {
+					        console.log("deleting <"+x+">");
+					        delete globalThis[x];
+					      }
+					    }
+					    """);
+			//System.exit(0);
+			//for (int i = 0; i < args.length; i++) {
+			//	this.deleteGlobal("$" + i);
+			//}
 		}
 	}
 

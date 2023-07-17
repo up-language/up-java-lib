@@ -86,6 +86,19 @@ class VM8Test {
 		vm.print(vm.newDate(), "vm.newDate()");
 		vm.print(vm.newDate("2023-07-17T17:13:12.577Z"), "vm.newDate(\"2023-07-17T17:13:12.577Z\")");
 		vm.print(vm.newDate(new Date()), "vm.newDate(new Date()");
+		
+		for (int i=0; i<(int)vm.js("json.c.length"); i++) {
+			vm.print(vm.js("json.c[$0]", i), "enum");
+		}
+		
+		if ((boolean)vm.js("json.hasOwnProperty('a')")) {
+			vm.print("has a");
+		}
+		
+		vm.js("""
+			  $xyz = 123;
+			  console.log($xyz);
+			  """);
 
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",
