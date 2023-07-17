@@ -83,6 +83,9 @@ class VM8Test {
 		vm.js("console.log(JSON.stringify(new Date()))");
 		vm.load(":/class.js");
 		// com.oracle.truffle.polyglot.PolyglotMap
+		vm.print(vm.newDate(), "vm.newDate()");
+		vm.print(vm.newDate("2023-07-17T17:13:12.577Z"), "vm.newDate(\"2023-07-17T17:13:12.577Z\")");
+		vm.print(vm.newDate(new Date()), "vm.newDate(new Date()");
 
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",

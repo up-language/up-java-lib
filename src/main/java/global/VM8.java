@@ -8,8 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.AbstractList;
 import java.util.AbstractMap;
+import java.util.Date;
 
 import javax.script.ScriptException;
 
@@ -86,6 +89,30 @@ public class VM8 implements Closeable {
 			return null;
 		}
 	}
+	
+	public Object newDate() {
+		try {
+			return js("new Date()");
+		} catch (ScriptException e) {
+			return null;
+		}
+	}
+
+	public Object newDate(String x) {
+		try {
+			var result = newDate();
+			var ts = js("Date.parse($0)", x);
+			js("$0.setTime($1)", result, ts);
+			return result;
+		} catch (ScriptException e) {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public Object newDate(Date x) {
+		return newDate(x.toGMTString());
+	}
 
 	@SuppressWarnings("unchecked")
 	public AbstractList<Object> asArray(Object x) {
@@ -95,6 +122,12 @@ public class VM8 implements Closeable {
 	@SuppressWarnings("unchecked")
 	public AbstractMap<String, Object> asObject(Object x) {
 		return (AbstractMap<String, Object>) x;
+	}
+	
+	public Date asDate(Object x) throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        Date date = df.parse(x.toString());
+        return date;
 	}
 
 	private Object run(String script, Object[] args) throws ScriptException {
