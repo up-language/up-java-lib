@@ -6,18 +6,20 @@ plugins {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            // https://jitpack.io/#com.gitlab.javacommons/qiita-db
             groupId = 'com.github.up-language'
             artifactId = 'up-java-lib'
-            version = '2023.0717.2334'
+            version = '2023.0717.2344'
             from components.java
         }
     }
 }
 
+
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.ADOPTIUM
     }
 }
 
