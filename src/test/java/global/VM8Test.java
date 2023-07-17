@@ -2,6 +2,9 @@ package global;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.json.JSONArray;
@@ -41,7 +44,7 @@ class VM8Test {
 		vm.setGlobal("count", 3);
 		vm.js("print(count)");
 		assertEquals(3, vm.js("count"));
-		//vm.load(":/json.js");
+		// vm.load(":/json.js");
 		vm.loadFile(":/json.js");
 		// vm.loadFile(":/json.js");
 		// vm.loadFile("https://raw.githubusercontent.com/up-language/up-language/main/om-java/json.js");
@@ -64,13 +67,23 @@ class VM8Test {
 		vm.js("$0[1]=777", ref);
 		vm.print(vm.js("ary"));
 		vm.js("console.log($0)", "this is $0");
-		//vm.load(":/run.js");
+		// vm.load(":/run.js");
 		// vm.load(":/error.js");
 		Object dt = vm.load(":/date.js");
-		System.out.println(dt.getClass().getName());
+		vm.print(dt.getClass().getName(), "dt.getClass().getName()");
+		System.out.println(dt.toString());
+		var keys = vm.asObject(dt).keySet().toArray();
+		//for (int i = 0; i < keys.length; i++) {
+		//	System.out.println("[" + keys[i] + "]");
+		//}
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        Date date = df.parse(dt.toString());
+        System.out.println(date);
+
 		vm.js("console.log(JSON.stringify(new Date()))");
 		vm.load(":/class.js");
-		
+		// com.oracle.truffle.polyglot.PolyglotMap
+
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",
 		 * vm.jsToJson("json").toString()); Object json = vm.js("json");
