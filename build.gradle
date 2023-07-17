@@ -9,7 +9,7 @@ publishing {
             // https://jitpack.io/#com.gitlab.javacommons/qiita-db
             groupId = 'com.github.up-language'
             artifactId = 'up-java-lib'
-            version = '0.1'
+            version = '2023.0717.2309'
             from components.java
         }
     }
