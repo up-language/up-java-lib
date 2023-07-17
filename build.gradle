@@ -1,0 +1,65 @@
+plugins {
+    id 'java-library'
+    //id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.+'
+    id "com.github.mrsarm.jshell.plugin" version "1.2.1"
+}
+
+/*
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // https://jitpack.io/#com.gitlab.javacommons/qiita-db
+            groupId = 'com.github.up-language'
+            artifactId = 'up-java-lib'
+            version = '0.1'
+            from components.java
+        }
+    }
+}
+*/
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+    api 'com.google.guava:guava:31.1-jre'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-io
+	api 'org.apache.commons:commons-io:1.3.2'
+	// https://mvnrepository.com/artifact/org.mozilla/rhino
+    api 'org.mozilla:rhino:1.7.14'
+    // https://mvnrepository.com/artifact/org.mozilla/rhino-engine
+    api 'org.mozilla:rhino-engine:1.7.14'
+    // https://mvnrepository.com/artifact/org.json/json
+    api 'org.json:json:20230618'
+    // https://mvnrepository.com/artifact/com.eclipsesource.j2v8/j2v8_win32_x86_64
+    api 'com.eclipsesource.j2v8:j2v8_win32_x86_64:4.6.0'
+    // https://mvnrepository.com/artifact/org.graalvm.js/js
+    api 'org.graalvm.js:js:23.0.0'
+    // https://mvnrepository.com/artifact/org.graalvm.js/js-scriptengine
+    api 'org.graalvm.js:js-scriptengine:23.0.0'
+}
+
+test {
+  // JUnit platform を使う設定
+  useJUnitPlatform()
+  testLogging {
+    // テスト時の標準出力と標準エラー出力を表示する
+    showStandardStreams true
+    // イベントを出力する (TestLogEvent)
+    events 'started', 'skipped', 'passed', 'failed'
+    // 例外発生時の出力設定 (TestExceptionFormat)
+    exceptionFormat 'full'
+  }
+}
