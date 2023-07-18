@@ -99,6 +99,9 @@ class VM8Test {
 			  $xyz = 123;
 			  console.log($xyz);
 			  """);
+		
+		vm.js("dt = new Date()");
+		vm.asDate(vm.js("dt"));
 
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",

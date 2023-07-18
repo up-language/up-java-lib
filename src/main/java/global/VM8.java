@@ -3,6 +3,8 @@ package global;
 import com.oracle.truffle.js.runtime.JSContextOptions;
 import com.oracle.truffle.js.scriptengine.GraalJSScriptEngine;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +128,8 @@ public class VM8 implements Closeable {
 	}
 
 	public Date asDate(Object x) throws ParseException {
+		assertTrue((boolean)__js__("$0 instanceof Date", x));
+		assertTrue((boolean)__js__("(typeof $0) === 'object'", x));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		Date date = df.parse(x.toString());
 		return date;
@@ -152,6 +156,15 @@ public class VM8 implements Closeable {
 
 	public Object js(String script, Object... args) throws ScriptException {
 		return run(script, args);
+	}
+
+	public Object __js__(String script, Object... args) {
+		try {
+			return run(script, args);
+		} catch (ScriptException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public Object jsToJson(String script, Object... args) throws ScriptException {
