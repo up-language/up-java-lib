@@ -104,6 +104,10 @@ public class VM8 implements Closeable {
 	public String typeof(Object x) {
 		return (String) __js__("__typeof__($0)", x);
 	}
+	
+	public boolean typeis(Object x, String type) {
+		return typeof(x).equals(type);
+	}
 
 	public Object newDate() {
 		try {
@@ -142,8 +146,8 @@ public class VM8 implements Closeable {
 	public Date asDate(Object x) throws ParseException {
 		assertTrue((boolean) __js__("$0 instanceof Date", x));
 		assertTrue((boolean) __js__("(typeof $0) === 'object'", x));
-		//System.out.println(typeof(x));
 		assertTrue(typeof(x).equals("date"));
+		assertTrue(typeis(x, "date"));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		Date date = df.parse(x.toString());
 		return date;
@@ -188,7 +192,7 @@ public class VM8 implements Closeable {
 	public Object toJson(Object x) {
 		if (x == null)
 			return null;
-		if (typeof(x).equals("date"))
+		if (typeis(x, "date"))
 			try {
 				return asDate(x);
 			} catch (ParseException e) {
@@ -261,10 +265,7 @@ public class VM8 implements Closeable {
 			System.out.println(x);
 		} else {
 			String json = null;
-			try {
-				json = (String) js("JSON.stringify($0, null, 2)", x);
-			} catch (ScriptException e) {
-			}
+			json = stringify(x, 2); //(String) js("JSON.stringify($0, null, 2)", x);
 			System.out.println(json);
 		}
 	}
@@ -274,10 +275,10 @@ public class VM8 implements Closeable {
 	}
 
 	public Object load(String path) throws Exception {
-		return loadFile(path);
+		return js(fetch(path));
 	}
 
-	public String getSourceCode(String path) throws Exception {
+	public String fetch(String path) throws Exception {
 		if (path.startsWith(":/")) {
 			return ResourceUtil.GetString(path.substring(2));
 		} else if (path.startsWith("http:") || path.startsWith("https:")) {
@@ -288,9 +289,13 @@ public class VM8 implements Closeable {
 			return FileUtils.readFileToString(new File(path));
 		}
 	}
+	
+	public String stringify(Object x, int indent) {
+		return (String) __js__("JSON.stringify($0, null, $1)", x, indent);
+	}
 
-	public Object loadFile(String path) throws Exception {
-		return js(getSourceCode(path));
+	public String stringify(Object x) {
+		return (String) __js__("JSON.stringify($0)", x);
 	}
 
 	class Printer {
