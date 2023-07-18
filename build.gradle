@@ -47,6 +47,9 @@ dependencies {
     api 'org.graalvm.js:js:23.0.0'
     // https://mvnrepository.com/artifact/org.graalvm.js/js-scriptengine
     api 'org.graalvm.js:js-scriptengine:23.0.0'
+    // https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.win32.win32.x86_64
+    api 'org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.3'
+    
 }
 
 test {
