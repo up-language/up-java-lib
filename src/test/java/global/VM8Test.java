@@ -133,26 +133,12 @@ class VM8Test {
 							 """);
 
 		try {
-			vm.js("assert(1==2)");
+			vm.js("verify(1==2)");
 			vm.print("assertion ng");
 		} catch (Exception e) {
 			vm.print("assertion ok");
 		}
 
-		/*
-		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",
-		 * vm.jsToJson("json").toString()); Object json = vm.js("json");
-		 * assertEquals(33, vm.jsToJson("$0.c[2]", json)); assertEquals(33,
-		 * vm.jsToJson("$0.c[$1]", json, 2)); vm.jsToJson("$0.c[$1]=$2", json, 2, 777);
-		 * vm.js("print(JSON.stringify(json, null, 2))"); assertEquals(777,
-		 * vm.js("json.c[2]")); vm.print(json, "json"); JSONArray ary = new JSONArray();
-		 * ary.put(111); ary.put(222); ary.put(333); vm.print(ary); Object ref =
-		 * vm.setGlobal("ary", ary); vm.print(ref); vm.js("$0[1]=777", ref);
-		 * vm.print(vm.js("ary")); vm.js("console.log($0)", "this is $0");
-		 * vm.load(":/run.js"); // vm.load(":/error.js"); Object dt =
-		 * vm.load(":/date.js"); System.out.println(dt.getClass().getName());
-		 * vm.js("console.log(JSON.stringify(new Date()))");
-		 */
 	}
 
 }

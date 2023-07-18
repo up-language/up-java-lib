@@ -58,8 +58,8 @@ public class VM8 implements Closeable {
 					}
 					""");
 			this.js("""
-					globalThis.assert = function(x) {
-					  if (!x) throw Error("Assertion failed.");
+					globalThis.verify = function(x) {
+					  if (!x) throw Error("Verification failed.");
 					}
 					""");
 			this.js("""
@@ -159,8 +159,8 @@ public class VM8 implements Closeable {
 	}
 
 	public Date asDate(Object x) throws ParseException {
-		assertTrue("$0 instanceof Date", x);
-		assertTrue("(typeof $0) === 'object'", x);
+		verify("$0 instanceof Date", x);
+		verify("(typeof $0) === 'object'", x);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		Date date = df.parse(x.toString());
 		return date;
@@ -320,7 +320,7 @@ public class VM8 implements Closeable {
 		return js("JSON.parse($0)", json);
 	}
 	
-	public void assertTrue(String script, Object...args) {
+	public void verify(String script, Object...args) {
 		Object result = null;
 		try {
 			result = run(script, args);
