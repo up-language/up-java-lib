@@ -73,12 +73,12 @@ class VM8Test {
 		vm.print(dt.getClass().getName(), "dt.getClass().getName()");
 		System.out.println(dt.toString());
 		var keys = vm.asObject(dt).keySet().toArray();
-		//for (int i = 0; i < keys.length; i++) {
-		//	System.out.println("[" + keys[i] + "]");
-		//}
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        Date date = df.parse(dt.toString());
-        System.out.println(date);
+		// for (int i = 0; i < keys.length; i++) {
+		// System.out.println("[" + keys[i] + "]");
+		// }
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		Date date = df.parse(dt.toString());
+		System.out.println(date);
 
 		vm.js("console.log(JSON.stringify(new Date()))");
 		vm.load(":/class.js");
@@ -86,33 +86,43 @@ class VM8Test {
 		vm.print(vm.newDate(), "vm.newDate()");
 		vm.print(vm.newDate("2023-07-17T17:13:12.577Z"), "vm.newDate(\"2023-07-17T17:13:12.577Z\")");
 		vm.print(vm.newDate(new Date()), "vm.newDate(new Date()");
-		
-		for (int i=0; i<(int)vm.js("json.c.length"); i++) {
+
+		for (int i = 0; i < (int) vm.js("json.c.length"); i++) {
 			vm.print(vm.js("json.c[$0]", i), "enum");
 		}
-		
-		if ((boolean)vm.js("json.hasOwnProperty('a')")) {
+
+		if ((boolean) vm.js("json.hasOwnProperty('a')")) {
 			vm.print("has a");
 		}
-		
+
 		vm.js("""
-			  $xyz = 123;
-			  console.log($xyz);
-			  """);
-		
+				$xyz = 123;
+				console.log($xyz);
+				""");
+
 		vm.js("dt = new Date()");
 		vm.asDate(vm.js("dt"));
-		
+
 		var dtAry = vm.newArray(vm.newDate());
 		var dtAryJson = vm.toJson(dtAry);
 		System.out.println(dtAryJson);
-		vm.print(((JSONArray)dtAryJson).toString(2), "((JSONArray)dtAryJson).toString(2)");
+		vm.print(((JSONArray) dtAryJson).toString(2), "((JSONArray)dtAryJson).toString(2)");
 		var dtAryNative = vm.toNative(dtAryJson);
 		vm.print(dtAryNative);
-		
+
 		vm.print(vm.toJson(vm.js("undefined")));
-		
+
 		vm.print(vm.parse("3.14").getClass().getName());
+
+		var build_cmd = vm.readAsText("https://raw.githubusercontent.com/atom/atom/master/script/build.cmd");
+		vm.print(build_cmd, "build_cmd");
+		build_cmd = (String)vm.js("readAsText('https://raw.githubusercontent.com/atom/atom/master/script/build.cmd')");
+		vm.print(build_cmd, "build_cmd");
+
+		var package_json = vm.readAsJson("https://raw.githubusercontent.com/atom/atom/master/package.json");
+		vm.print(package_json, "package_json");
+		package_json = vm.js("readAsJson('https://raw.githubusercontent.com/atom/atom/master/package.json')");
+		vm.print(package_json, "package_json");
 
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",

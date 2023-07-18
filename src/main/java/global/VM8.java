@@ -48,6 +48,16 @@ public class VM8 implements Closeable {
 					}
 					""");
 			this.js("""
+					globalThis.readAsText = function(path) {
+					  return __vm__.readAsText(path);
+					}
+					""");
+			this.js("""
+					globalThis.readAsJson = function(path) {
+					  return __vm__.readAsJson(path);
+					}
+					""");
+			this.js("""
 					globalThis.__typeof__ = function(x) {
 					  if (x === null) return "null";
 					  if (x instanceof Array) return "array";
@@ -276,10 +286,10 @@ public class VM8 implements Closeable {
 	}
 
 	public Object load(String path) throws Exception {
-		return js(fetch(path));
+		return js(readAsText(path));
 	}
 
-	public String fetch(String path) throws Exception {
+	public String readAsText(String path) throws Exception {
 		if (path.startsWith(":/")) {
 			return ResourceUtil.GetString(path.substring(2));
 		} else if (path.startsWith("http:") || path.startsWith("https:")) {
@@ -289,6 +299,10 @@ public class VM8 implements Closeable {
 		} else {
 			return FileUtils.readFileToString(new File(path));
 		}
+	}
+	
+	public Object readAsJson(String path) throws ScriptException, Exception {
+		return parse(readAsText(path));
 	}
 	
 	public String stringify(Object x, int indent) {
