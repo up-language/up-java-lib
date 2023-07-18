@@ -61,9 +61,9 @@ public class VM8 implements Closeable {
 		return n;
 	}
 
-	//public void deleteGlobal(String name) throws ScriptException {
-	//	engine.eval("delete " + name);
-	//}
+	// public void deleteGlobal(String name) throws ScriptException {
+	// engine.eval("delete " + name);
+	// }
 
 	@SuppressWarnings("unchecked")
 	public AbstractList<Object> newArray(Object... args) {
@@ -110,9 +110,9 @@ public class VM8 implements Closeable {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public Object newDate(Date x) {
-		return newDate(x.toGMTString());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+		return newDate(sdf.format(x));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -139,18 +139,14 @@ public class VM8 implements Closeable {
 			return engine.eval(script);
 		} finally {
 			engine.eval("""
-					    for (let x in globalThis) {
-					      //console.log("<"+x+">");
-					      if (x.startsWith("$")) {
-					        console.log("deleting <"+x+">");
-					        delete globalThis[x];
-					      }
-					    }
-					    """);
-			//System.exit(0);
-			//for (int i = 0; i < args.length; i++) {
-			//	this.deleteGlobal("$" + i);
-			//}
+					for (let x in globalThis) {
+					  //console.log("<"+x+">");
+					  if (x.startsWith("$")) {
+					    //console.log("deleting <"+x+">");
+					    delete globalThis[x];
+					  }
+					}
+					""");
 		}
 	}
 
