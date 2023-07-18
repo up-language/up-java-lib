@@ -192,6 +192,7 @@ public class VM8 implements Closeable {
 	public Object toJson(Object x) {
 		if (x == null)
 			return null;
+		if (typeis(x, "undefined")) return null;
 		if (typeis(x, "date"))
 			try {
 				return asDate(x);
@@ -296,6 +297,10 @@ public class VM8 implements Closeable {
 
 	public String stringify(Object x) {
 		return (String) __js__("JSON.stringify($0)", x);
+	}
+
+	public Object parse(String json) throws ScriptException {
+		return js("JSON.parse($0)", json);
 	}
 
 	class Printer {

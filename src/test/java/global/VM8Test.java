@@ -106,8 +106,13 @@ class VM8Test {
 		var dtAry = vm.newArray(vm.newDate());
 		var dtAryJson = vm.toJson(dtAry);
 		System.out.println(dtAryJson);
+		vm.print(((JSONArray)dtAryJson).toString(2), "((JSONArray)dtAryJson).toString(2)");
 		var dtAryNative = vm.toNative(dtAryJson);
 		vm.print(dtAryNative);
+		
+		vm.print(vm.toJson(vm.js("undefined")));
+		
+		vm.print(vm.parse("3.14").getClass().getName());
 
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",
