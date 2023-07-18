@@ -58,6 +58,11 @@ public class VM8 implements Closeable {
 					}
 					""");
 			this.js("""
+					globalThis.assert = function(x) {
+					  if (!x) throw Error("Assertion failed.");
+					}
+					""");
+			this.js("""
 					globalThis.__typeof__ = function(x) {
 					  if (x === null) return "null";
 					  if (x instanceof Array) return "array";
@@ -154,10 +159,8 @@ public class VM8 implements Closeable {
 	}
 
 	public Date asDate(Object x) throws ParseException {
-		assertTrue((boolean) __js__("$0 instanceof Date", x));
-		assertTrue((boolean) __js__("(typeof $0) === 'object'", x));
-		assertTrue(typeof(x).equals("date"));
-		assertTrue(typeis(x, "date"));
+		assertTrue("$0 instanceof Date", x);
+		assertTrue("(typeof $0) === 'object'", x);
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		Date date = df.parse(x.toString());
 		return date;
@@ -315,6 +318,19 @@ public class VM8 implements Closeable {
 
 	public Object parse(String json) throws ScriptException {
 		return js("JSON.parse($0)", json);
+	}
+	
+	public void assertTrue(String script, Object...args) {
+		Object result = null;
+		try {
+			result = run(script, args);
+		} catch (ScriptException e) {
+			e.printStackTrace();
+			org.junit.jupiter.api.Assertions.fail();
+		}
+		if (result == null) org.junit.jupiter.api.Assertions.fail();
+		if (!(result instanceof java.lang.Boolean)) org.junit.jupiter.api.Assertions.fail();
+		org.junit.jupiter.api.Assertions.assertTrue((boolean) result);
 	}
 
 	class Printer {
