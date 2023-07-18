@@ -102,6 +102,12 @@ class VM8Test {
 		
 		vm.js("dt = new Date()");
 		vm.asDate(vm.js("dt"));
+		
+		var dtAry = vm.newArray(vm.newDate());
+		var dtAryJson = vm.toJson(dtAry);
+		System.out.println(dtAryJson);
+		var dtAryNative = vm.toNative(dtAryJson);
+		vm.print(dtAryNative);
 
 		/*
 		 * assertEquals("{\"a\":\"abc\",\"b\":123,\"c\":[11,22,33]}",

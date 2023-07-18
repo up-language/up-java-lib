@@ -47,6 +47,14 @@ public class VM8 implements Closeable {
 					  return __vm__.load(path);
 					}
 					""");
+			this.js("""
+					globalThis.__typeof__ = function(x) {
+					  if (x === null) return "null";
+					  if (x instanceof Array) return "array";
+					  if (x instanceof Date) return "date";
+					  return (typeof x);
+					}
+					""");
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
@@ -93,6 +101,10 @@ public class VM8 implements Closeable {
 		}
 	}
 
+	public String typeof(Object x) {
+		return (String) __js__("__typeof__($0)", x);
+	}
+
 	public Object newDate() {
 		try {
 			return js("new Date()");
@@ -128,8 +140,10 @@ public class VM8 implements Closeable {
 	}
 
 	public Date asDate(Object x) throws ParseException {
-		assertTrue((boolean)__js__("$0 instanceof Date", x));
-		assertTrue((boolean)__js__("(typeof $0) === 'object'", x));
+		assertTrue((boolean) __js__("$0 instanceof Date", x));
+		assertTrue((boolean) __js__("(typeof $0) === 'object'", x));
+		//System.out.println(typeof(x));
+		assertTrue(typeof(x).equals("date"));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 		Date date = df.parse(x.toString());
 		return date;
@@ -174,6 +188,13 @@ public class VM8 implements Closeable {
 	public Object toJson(Object x) {
 		if (x == null)
 			return null;
+		if (typeof(x).equals("date"))
+			try {
+				return asDate(x);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return null;
+			}
 		String className = x.getClass().getName();
 		switch (className) {
 		case "com.oracle.truffle.polyglot.PolyglotList": {
@@ -204,6 +225,7 @@ public class VM8 implements Closeable {
 	public Object toNative(Object x) {
 		if (x == null)
 			return null;
+		if (x instanceof java.util.Date) return newDate((java.util.Date)x);
 		String className = x.getClass().getName();
 		switch (className) {
 
