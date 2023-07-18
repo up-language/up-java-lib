@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.HostAccess;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -34,7 +35,8 @@ public class VM8 implements Closeable {
 	public VM8() {
 		this.engine = GraalJSScriptEngine.create(
 				Engine.newBuilder().option("engine.WarnInterpreterOnly", "false").build(),
-				Context.newBuilder("js").allowAllAccess(true).option(JSContextOptions.ECMASCRIPT_VERSION_NAME, "2022"));
+				Context.newBuilder("js").allowHostAccess(HostAccess.ALL).allowHostClassLookup(className -> true)
+						.allowAllAccess(true).option(JSContextOptions.ECMASCRIPT_VERSION_NAME, "2022"));
 		this.setGlobal("__vm__", this);
 		try {
 			this.js("""
@@ -119,7 +121,7 @@ public class VM8 implements Closeable {
 	public String typeof(Object x) {
 		return (String) __js__("__typeof__($0)", x);
 	}
-	
+
 	public boolean typeis(Object x, String type) {
 		return typeof(x).equals(type);
 	}
@@ -205,7 +207,8 @@ public class VM8 implements Closeable {
 	public Object toJson(Object x) {
 		if (x == null)
 			return null;
-		if (typeis(x, "undefined")) return null;
+		if (typeis(x, "undefined"))
+			return null;
 		if (typeis(x, "date"))
 			try {
 				return asDate(x);
@@ -243,7 +246,8 @@ public class VM8 implements Closeable {
 	public Object toNative(Object x) {
 		if (x == null)
 			return null;
-		if (x instanceof java.util.Date) return newDate((java.util.Date)x);
+		if (x instanceof java.util.Date)
+			return newDate((java.util.Date) x);
 		String className = x.getClass().getName();
 		switch (className) {
 
@@ -279,7 +283,7 @@ public class VM8 implements Closeable {
 			System.out.println(x);
 		} else {
 			String json = null;
-			json = stringify(x, 2); //(String) js("JSON.stringify($0, null, 2)", x);
+			json = stringify(x, 2); // (String) js("JSON.stringify($0, null, 2)", x);
 			System.out.println(json);
 		}
 	}
@@ -303,11 +307,11 @@ public class VM8 implements Closeable {
 			return FileUtils.readFileToString(new File(path));
 		}
 	}
-	
+
 	public Object readAsJson(String path) throws ScriptException, Exception {
 		return parse(readAsText(path));
 	}
-	
+
 	public String stringify(Object x, int indent) {
 		return (String) __js__("JSON.stringify($0, null, $1)", x, indent);
 	}
@@ -319,8 +323,8 @@ public class VM8 implements Closeable {
 	public Object parse(String json) throws ScriptException {
 		return js("JSON.parse($0)", json);
 	}
-	
-	public void verify(String script, Object...args) {
+
+	public void verify(String script, Object... args) {
 		Object result = null;
 		try {
 			result = run(script, args);
@@ -328,8 +332,10 @@ public class VM8 implements Closeable {
 			e.printStackTrace();
 			org.junit.jupiter.api.Assertions.fail();
 		}
-		if (result == null) org.junit.jupiter.api.Assertions.fail();
-		if (!(result instanceof java.lang.Boolean)) org.junit.jupiter.api.Assertions.fail();
+		if (result == null)
+			org.junit.jupiter.api.Assertions.fail();
+		if (!(result instanceof java.lang.Boolean))
+			org.junit.jupiter.api.Assertions.fail();
 		org.junit.jupiter.api.Assertions.assertTrue((boolean) result);
 	}
 

@@ -139,6 +139,12 @@ class VM8Test {
 			vm.print("assertion ok");
 		}
 
+		vm.js("""
+				var $file = new (Java.type('java.io.File'))("test.md");
+				var $fileName = $file.getName();
+				console.log($fileName);
+				         """);
+
 	}
 
 }
